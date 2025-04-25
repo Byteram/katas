@@ -1,6 +1,7 @@
-import random
 import time
-import pytest  # Optional: for better test organization
+import random
+from app.main import max_multiple
+
 
 # === Fixed Tests ===
 def test_fixed():

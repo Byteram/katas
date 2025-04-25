@@ -310,3 +310,7 @@ build/
 next-env.d.ts
 .next/
 out/
+
+
+# Obsidian
+.obsidian
