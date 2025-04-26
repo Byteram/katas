@@ -3,7 +3,25 @@ import random
 from app.main import max_multiple
 
 
-# === Fixed Tests ===
+def performance(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        execution_time = end_time - start_time
+
+        assert execution_time < 1.0, (
+            f"Performance test failed for {func.__name__}. "
+            f"Execution time: {execution_time:.4f} seconds "
+            f"(max allowed: 1.0 seconds)"
+        )
+        print(f"Performance test passed for {func.__name__}. "
+              f"Execution time: {execution_time:.4f} seconds")
+        return result
+    return wrapper
+
+
+@performance
 def test_fixed():
     """
     Test basic cases with known inputs and outputs.
@@ -21,7 +39,8 @@ def test_fixed():
     assert max_multiple(3, 1) == 0
     print("Fixed tests passed")
 
-# === Edge Case Tests ===
+
+@performance
 def test_edge_cases():
     """
     Test boundary conditions and special cases.
@@ -29,25 +48,26 @@ def test_edge_cases():
     """
     # When limit is 0
     assert max_multiple(1, 0) == 0
-    
+
     # When divisor equals limit
     assert max_multiple(1000000, 1000000) == 1000000
-    
+
     # When divisor is just less than limit
     assert max_multiple(999999, 1000000) == 999999
-    
+
     # When divisor is larger than limit
     assert max_multiple(10**6, 10**6 - 1) == 0
-    
+
     # When divisor is 1 (always returns limit)
     assert max_multiple(1, 42) == 42
-    
+
     # When divisor is larger than limit
     assert max_multiple(5, 3) == 0
-    
+
     print("Edge cases passed")
 
-# === Random Tests ===
+
+@performance
 def test_random():
     """
     Test with random inputs to ensure robustness.
@@ -61,32 +81,13 @@ def test_random():
         assert result == expected, (
             f"Failed for divisor={divisor}, limit={limit}. "
             f"Expected {expected}, got {result}. "
-            f"Calculation: limit - (limit % divisor) = {limit} - ({limit} % {divisor}) = {expected}"
+            f"Calculation: limit - (limit % divisor) = {limit} - "
+            f"({limit} % {divisor}) = {expected}"
         )
     print("Random tests passed")
 
-# === Performance Tests ===
-def test_performance():
-    """
-    Test performance with large numbers.
-    These tests ensure the function performs well with large inputs.
-    """
-    start_time = time.time()
-    
-    # Test with large numbers
-    for _ in range(10):
-        divisor = random.randint(10**5, 10**6)
-        limit = random.randint(10**5, 10**6)
-        max_multiple(divisor, limit)
-    
-    end_time = time.time()
-    execution_time = end_time - start_time
-    
-    # Ensure the function completes within a reasonable time (e.g., 1 second)
-    assert execution_time < 1.0, f"Performance test failed. Execution time: {execution_time:.4f} seconds"
-    print(f"Performance tests passed. Execution time: {execution_time:.4f} seconds")
 
-# === Run All Tests ===
+@performance
 def run_all_tests():
     """
     Run all test functions in sequence.
@@ -94,7 +95,6 @@ def run_all_tests():
     test_fixed()
     test_edge_cases()
     test_random()
-    test_performance()
     print("All tests passed successfully.")
 
 
